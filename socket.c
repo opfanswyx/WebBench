@@ -33,24 +33,26 @@ int Socket(const char *host, int clientPort)
     struct sockaddr_in ad;
     struct hostent *hp;
     
-    memset(&ad, 0, sizeof(ad));
+    memset(&ad, 0, sizeof(ad)); //初始化地址
     ad.sin_family = AF_INET;
 
-    inaddr = inet_addr(host);
+    inaddr = inet_addr(host); //尝试把主机名转化为数字
     if (inaddr != INADDR_NONE)
         memcpy(&ad.sin_addr, &inaddr, sizeof(inaddr));
     else
     {
-        hp = gethostbyname(host);
+        hp = gethostbyname(host); //获取ip地址
         if (hp == NULL)
             return -1;
         memcpy(&ad.sin_addr, hp->h_addr, hp->h_length);
     }
     ad.sin_port = htons(clientPort);
     
+    /*建立socket*/
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0)
         return sock;
+    /*建立连接*/
     if (connect(sock, (struct sockaddr *)&ad, sizeof(ad)) < 0)
         return -1;
     return sock;
